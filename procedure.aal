@@ -1,0 +1,62 @@
+## The agent implementation and addressing information 
+agents:
+  flooder_agent:
+    group: flooder_group
+    path: /share/magi/modules/flooder/flooder.tar.gz
+    execargs: {servers: [servernode]}
+
+  server_agent:
+    group: server_group
+    path: /share/magi/modules/apache/apache.tar.gz 
+    execargs: []
+
+## The mapping from the AAL procedure to the experiment apparatus 
+groups:
+  flooder_group: [floodernode]
+  server_group: [servernode]
+
+streamstarts: [ serverstream, flooderstream, cleanupstream ]
+
+eventstreams:
+  serverstream: 
+      - type: event
+        agent: server_agent 
+        method: startServer
+        trigger: serverStarted 
+        args: {}
+
+      - type: trigger
+        triggers: [ { event: flooderStopped} ] 
+
+      - type: event
+        agent: server_agent 
+        method: stopServer 
+        trigger: serverStopped 
+        args: {} 
+
+  flooderstream:      
+      - type: trigger
+        triggers: [ { event: serverStarted } ] 
+
+      - type: event
+        agent: client_agent 
+        method: startFlood
+        args: {}
+
+      - type: trigger
+        triggers: [ { timeout: 60000 } ]
+
+
+      - type: event
+        agent: flooder_agent
+        method: stopFlood
+        trigger: flooderStopped 
+        args: {}
+      
+
+  cleanupstream:
+      - type: trigger
+        triggers: [ {event: serverStopped, target: exit} ] 
+
+################################################
+
