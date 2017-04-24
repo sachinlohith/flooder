@@ -5,7 +5,9 @@ We demonstrate three aspects of MAGI: specifying multiple event streams, syncrho
 # Event Streams
 This experiment has three streams: the **flooder stream**, the **server stream**, and the **cleanup stream**. 
 The co-ordination between the events can be illustrated as follows:
+
 ![Event diagram](https://github.com/sachinlohith/flooder/blob/master/event.png)
+
 Event streams can be synchronized using event-based triggers or time-based triggers. The triggers are indicated as wait states in gray. The group formation and loading the agents, which is also automated by the orchestrator tool, is not illustrated above.
 
 # Server Stream
