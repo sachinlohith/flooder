@@ -1,18 +1,24 @@
 # flooder
 In this experiment we demonstrate how one can setup a flooding agent and a victim server. 
+
 We demonstrate three aspects of MAGI: specifying multiple event streams, syncrhonizing with triggers, and a special target called exit to unload agents.
 
 # Event Streams
 This experiment has three streams: the **flooder stream**, the **server stream**, and the **cleanup stream**. 
+
 The co-ordination between the events can be illustrated as follows:
 
 ![Event diagram](https://github.com/sachinlohith/flooder/blob/master/event.png)
 
-Event streams can be synchronized using event-based triggers or time-based triggers. The triggers are indicated as wait states in gray. The group formation and loading the agents, which is also automated by the orchestrator tool, is not illustrated above.
+Event streams can be synchronized using event-based triggers or time-based triggers.
+
+The triggers are indicated as wait states in gray. The group formation and loading the agents, which is also automated by the orchestrator tool, is not illustrated above.
 
 # Server Stream
 The server event stream consists of three states. The start state which generates a trigger, called serverStarted, once the server agent is activated on the experiment nodes.
+
 It then enters the wait state and stays there for a period ∆t and terminates the server agent in stop state. 
+
 The AAL description is below:
 ```
 serverstream: 
@@ -34,8 +40,11 @@ serverstream:
 
 # Flooder Stream
 The flooder stream consists of five states. First, the flooder agent implementation is parameterized by the configuration state. This occurs as part of the agent loading process. 
+
 The flooder stream then synchronizes with the server stream by waiting for the serverStarted trigger from the server nodes. Once it receives the trigger the flooder agent is activated in the start state.
+
 Next, the flooder stream waits for a period of ∆t before repeating the start and stop events one more time while waiting for a period of ∆t in between. Finally, the flooder stream terminates the flooder agent in the stop state. 
+
 The AAL description is as follows:
 ```
 flooderstream:
@@ -87,7 +96,9 @@ flooderstream:
 
 # Cleanup Stream
 The last event stream, the cleanup stream consists of two states. First, it waits for the server to stop and then it enters the exit state.
+
 The exit state unload and tears down all the comminucation mechanisms between the agents. The exit state is entered by the key target is used to transfer control to a reserved state internal to the orchestrator.
+
 It causes the orchestrator to send agent unload and disband group messages to all the experiment node and then it exits the orchestrator.
 ```
 cleanupstream:
@@ -143,9 +154,15 @@ stream groupLeaveS... : trig : (16:18:06) trigger completed: GroupTeardownDone: 
 stream groupLeaveS... : DONE : (16:18:06) complete.
 ```
 The orchestration tool runs an internally defined stream called initilization that is responsible for establishing the server\_group and the flooder\_group and loading the agents. Once the agents are loaded, as indicated by the received trigger AgentLoadDone, The initialization stream is complete.
+
 Now the serverstream, flooderstream and the cleanupstream start concurrently. The serverstream sends the startServer event to the server\_group. All members of the server\_group start the server and fire a trigger serverStarted.
+
 The flooderstream on receiving the trigger *serverStarted* from the server\_group, sends the *startFlood* event to the flooder\_group. One minute later, the clientstream sends the trigger *stopFlood* to the flooder\_group. This sequence of events repeats one more time before sending the final *stopFlood* trigger to the flooder\_group, terminating the flooder\_agent.
+
 Once the serverstream finishes the wait period, it sends out *stopServer* on the server\_group. Once all the servers are stopped, the members of the server\_group respond with a *serverStopped* trigger, which is forwarded to the cleanupstream. 
+
 The procedure and topology file that were used for the casestudy are attached below. 
+
 **Procedure**: [casestudy_clientserver.aal](https://github.com/sachinlohith/flooder/blob/master/procedure.aal)
+
 **Topology** : [casestudy_clientserver.tcl](https://github.com/sachinlohith/flooder/blob/master/topology.tcl)
