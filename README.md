@@ -210,4 +210,4 @@ $ export GRAPHCONF=graph.conf
 $ /share/magi/current/magi_graph.py -e $EXP -p $PROJ -c $GRAPHCONF -o traffic_plot.png
 ```
 
-![Graph]()
+![Graph](https://github.com/sachinlohith/flooder/blob/master/traffic_plot.png)
