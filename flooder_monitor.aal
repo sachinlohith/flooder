@@ -1,0 +1,110 @@
+## The agent implementation and addressing information 
+agents:
+  flooder_agent:
+    group: flooder_group
+    path: /share/magi/modules/flooder/flooder.tar.gz
+    execargs: {servers: [servernode]}
+
+  server_agent:
+    group: server_group
+    path: /share/magi/modules/apache/apache.tar.gz 
+    execargs: []
+
+  monitor_agent:
+    group: monitor_group
+    path: /share/magi/modules/pktcounters/pktCountersAgent.tar.gz
+    execargs: {}
+
+## The mapping from the AAL procedure to the experiment apparatus 
+groups:
+  flooder_group: [floodernode]
+  server_group: [servernode]
+  monitor_group: [servernode]
+
+streamstarts: [ serverstream, flooderstream, cleanupstream, monitor]
+
+eventstreams:
+  serverstream: 
+      - type: event 
+        agent: server_agent 
+        method: startServer
+        trigger: serverStarted 
+        args: {}
+
+      - type: trigger
+        triggers: [ { timeout: 180000 } ]
+
+      - type: event
+        agent: server_agent 
+        method: stopServer 
+        trigger: serverStopped 
+        args: {} 
+
+  flooderstream:
+      - type: event
+        agent: flooder_agent
+        method: setConfiguration
+        args:
+                dst: '10.1.1.3'
+                proto: 'udp'
+                length: 'minmax(64, 1024)'
+                ratetype: 'flat'
+                highrate: '5000'
+                lowrate: '5000'
+                sport: 'minmax(1024, 4096)'
+                dport: 'minmax(1024, 4096)'
+
+      - type: trigger
+        triggers: [ { event: serverStarted } ] 
+
+      - type: event
+        agent: flooder_agent
+        method: startFlood
+        args: {}
+
+      - type: trigger
+        triggers: [ { timeout: 60000 } ]
+
+      - type: event
+        agent: flooder_agent
+        method: stopFlood
+        args: {}
+      
+      - type: trigger
+        triggers: [ { timeout: 60000 } ]
+
+      - type: event
+        agent: flooder_agent
+        method: startFlood
+        args: {}
+
+      - type: trigger
+        triggers: [ { timeout: 60000 } ]
+
+      - type: event
+        agent: flooder_agent
+        method: stopFlood
+        args: {}
+
+  cleanupstream:
+      - type: trigger
+        triggers: [ {event: serverStopped} ] 
+
+  monitor:
+      - type: trigger
+        triggers: [ {event: serverStarted} ]    
+        
+      - type: event
+        agent: monitor_agent
+        method: startCollection
+        trigger: collectionServer
+        args: {}
+
+      - type: trigger
+        triggers: [ {event: serverStopped} ] 
+
+      - type: event
+        agent: monitor_agent
+        method: stopCollection
+        args: {}
+########################################

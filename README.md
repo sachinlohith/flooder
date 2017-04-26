@@ -211,3 +211,6 @@ $ /share/magi/current/magi_graph.py -e $EXP -p $PROJ -c $GRAPHCONF -o traffic_pl
 ```
 
 ![Graph](https://github.com/sachinlohith/flooder/blob/master/traffic_plot.png)
+
+**Procedure**:      [flooder_monitor.aal]()
+**Graph Config**:   [graph.conf]()
