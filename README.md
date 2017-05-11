@@ -214,4 +214,6 @@ $ /share/magi/current/magi_graph.py -e $EXP -p $PROJ -c $GRAPHCONF -o traffic_pl
 
 **Procedure**   :   [flooder_monitor.aal](https://github.com/sachinlohith/flooder/blob/master/flooder_monitor.aal)
 
+**Archived logs**:  [casestudy_flooder_monitor.tar.gz](https://github.com/sachinlohith/flooder/blob/master/cs_exparchive_flooder_monitor.tar.gz)
+
 **Graph Config**:   [graph.conf](https://github.com/sachinlohith/flooder/blob/master/graph.conf)
