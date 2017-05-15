@@ -163,9 +163,11 @@ Once the serverstream finishes the wait period, it sends out *stopServer* on the
 
 The procedure and topology file that were used for the casestudy are attached below. 
 
-**Procedure**: [casestudy_clientserver.aal](https://github.com/sachinlohith/flooder/blob/master/procedure.aal)
+**Procedure**: [casestudy_flooder.aal](https://github.com/sachinlohith/flooder/blob/master/procedure.aal)
 
-**Topology** : [casestudy_clientserver.tcl](https://github.com/sachinlohith/flooder/blob/master/topology.tcl)
+**Topology** : [casestudy_flooder.tcl](https://github.com/sachinlohith/flooder/blob/master/topology.tcl)
+
+**Archived logs**:  [casestudy_flooder.tar.gz](https://github.com/sachinlohith/flooder/blob/master/cs_exparchive_flooder.tar.gz)
 
 # Visualizing Experiment Results
 In order to visulaize the traffic on the network, we modify the above mentioned procedure to add another stream called “monitor”. This stream deploys a packet sensor agent on the server node to measure the traffic on the link in the experiment. The packet sensor agent records the traffic data using MAGI’s data management layer.
